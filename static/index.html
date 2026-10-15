@@ -1,0 +1,1106 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartTix - Event Management Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg-sidebar: #061923;
+      --bg-sidebar-hover: #0c2534;
+      --sidebar-active: #048b78;
+      --bg-main: #f3f6f9;
+      --card-bg: #ffffff;
+      --teal-primary: #028575;
+      --teal-hover: #026b5e;
+      --teal-badge-bg: #dff5ef;
+      --teal-badge-text: #05826f;
+      --text-dark: #102436;
+      --text-muted: #62788d;
+      --border-color: #e5edf2;
+      --border-darker: #c5d7e3;
+      --code-bg: #f8fbfe;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-dark);
+      display: flex;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* SIDEBAR */
+    aside {
+      width: 255px;
+      background-color: var(--bg-sidebar);
+      color: #9cb1c2;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 24px 16px;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 8px 28px 8px;
+    }
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #09a28b, #03b898);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+    }
+    .brand-text h2 {
+      color: #ffffff;
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .brand-text span {
+      font-size: 11px;
+      color: #708b9e;
+    }
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 11px 16px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #96adbe;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .nav-item:hover {
+      background: var(--bg-sidebar-hover);
+      color: #ffffff;
+    }
+    .nav-item.active {
+      background-color: var(--teal-primary);
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .nav-item i {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+    .sidebar-footer {
+      padding: 16px 8px;
+      border-top: 1px solid #142a39;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sidebar-footer i {
+      font-size: 24px;
+      color: #03b898;
+    }
+    .foot-text {
+      font-size: 12px;
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .foot-sub {
+      font-size: 10px;
+      color: #698396;
+    }
+
+    /* MAIN VIEW */
+    .app-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      max-height: 100vh;
+    }
+
+    header {
+      background-color: #ffffff;
+      height: 68px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 36px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .search-box {
+      position: relative;
+      width: 440px;
+    }
+    .search-box i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #93a5b5;
+      font-size: 14px;
+    }
+    .search-box input {
+      width: 100%;
+      height: 38px;
+      padding-left: 38px;
+      padding-right: 14px;
+      background: #f7fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 13.5px;
+      outline: none;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .notif-bell {
+      position: relative;
+      cursor: pointer;
+      font-size: 17px;
+      color: #55697a;
+    }
+    .notif-dot {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 7px;
+      height: 7px;
+      background: #ef4444;
+      border-radius: 50%;
+    }
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .avatar-initials {
+      width: 36px;
+      height: 36px;
+      background: #bfdbfe;
+      color: #1e40af;
+      font-weight: 700;
+      font-size: 13px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .user-meta .name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+    .user-meta .role {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .content-area {
+      padding: 30px 40px 60px 40px;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* PAGE VIEW TAB CONTROL */
+    .view-page {
+      display: none;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .view-page.active {
+      display: flex;
+    }
+
+    /* CARDS & TABLES */
+    .ui-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 28px 32px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+    .section-head {
+      margin-bottom: 20px;
+    }
+    .section-head h2 {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-dark);
+      letter-spacing: -0.4px;
+      margin-bottom: 4px;
+    }
+    .section-head p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .kpi-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    .kpi-stat {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .kpi-stat i {
+      font-size: 24px;
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .kpi-teal i { background: #e6f6f4; color: var(--teal-primary); }
+    .kpi-blue i { background: #e0f2fe; color: #0284c7; }
+    .kpi-purple i { background: #f3e8ff; color: #7c3aed; }
+    .kpi-amber i { background: #fef3c7; color: #d97706; }
+    .kpi-num {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-dark);
+      line-height: 1.1;
+    }
+    .kpi-lbl {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13.5px;
+    }
+    .data-table th {
+      padding: 12px 16px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border-color);
+      color: #486581;
+      font-weight: 600;
+    }
+    .data-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-dark);
+    }
+    .data-table tr:hover {
+      background: #fbfcfe;
+    }
+    .badge {
+      padding: 4px 9px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-success { background: #d1fae5; color: #047857; }
+    .badge-warn { background: #fef3c7; color: #b45309; }
+
+    /* FORECAST PAGE STYLES */
+    .hero-banner {
+      background: linear-gradient(98deg, #effaf7 0%, #e8f7f4 50%, #edfcf9 100%);
+      border: 1px solid #d4ede7;
+      border-radius: 16px;
+      padding: 34px 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .ai-badge {
+      display: inline-block;
+      background: var(--teal-badge-bg);
+      color: var(--teal-badge-text);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+    }
+    .hero-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: #0b1f30;
+      letter-spacing: -0.6px;
+      margin-bottom: 10px;
+    }
+    .hero-desc {
+      font-size: 14.5px;
+      color: #4b667a;
+      max-width: 600px;
+      line-height: 1.5;
+    }
+    .callout-pill {
+      background: #ffffff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: 1px solid #c9eee5;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #07796a;
+      box-shadow: 0 6px 16px rgba(7, 121, 106, 0.06);
+    }
+    .forecast-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .card-icon.teal-bg { background: #e6f6f4; color: var(--teal-primary); }
+    .card-icon.mint-bg { background: #ecfdf5; color: #10b981; }
+    .card-titles h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .card-titles p { font-size: 13px; color: var(--text-muted); }
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; color: #243b4f; margin-bottom: 8px; }
+    .form-label span.req { color: #e11d48; }
+    .form-label span.opt { font-size: 12px; color: #889bad; font-weight: 400; }
+    .input-wrapper { position: relative; }
+    .text-input {
+      width: 100%;
+      height: 44px;
+      padding: 0 40px 0 14px;
+      border: 1px solid var(--border-darker);
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .input-icon-right {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9cb0c0;
+      cursor: pointer;
+    }
+    .info-callout {
+      background: #f1f7fc;
+      border: 1px solid #d8e8f5;
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 12.5px;
+      color: #405b73;
+    }
+    .btn-row { display: flex; gap: 14px; margin-top: 24px; }
+    .btn-secondary {
+      flex: 1;
+      height: 44px;
+      border: 1px solid var(--border-darker);
+      background: #ffffff;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #3b5266;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .btn-primary {
+      flex: 1.4;
+      height: 44px;
+      border: none;
+      background: var(--teal-primary);
+      color: white;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .stat-card {
+      background: #f8fafc;
+      border: 1px solid #e9eff5;
+      border-radius: 12px;
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .stat-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .stat-icon-wrap.teal-accent { color: var(--teal-primary); }
+    .stat-icon-wrap.mint-accent { color: #059669; }
+    .stat-info .stat-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+    .stat-info .stat-num { font-size: 32px; font-weight: 800; color: #0b1f30; line-height: 1; }
+    .forecast-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 4px;
+      margin-bottom: 20px;
+    }
+    .meta-item { display: flex; align-items: center; gap: 12px; }
+    .meta-item i { font-size: 16px; color: #7990a3; }
+    .meta-label { font-size: 11.5px; color: var(--text-muted); }
+    .meta-val { font-size: 13px; font-weight: 600; color: var(--text-dark); }
+    .meta-divider { width: 1px; height: 28px; background: var(--border-color); }
+    .disclaimer-callout {
+      background: #eff6fc;
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: #3b5a75;
+    }
+
+    /* CODE GRID */
+    .code-grid { display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 20px; }
+    .code-col-head { display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 600; color: #384f63; margin-bottom: 8px; }
+    .code-block {
+      background: var(--code-bg);
+      border: 1px solid #dce8f2;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #1e3a5f;
+      line-height: 1.55;
+      min-height: 135px;
+      white-space: pre;
+    }
+    .code-key { color: #0284c7; }
+    .code-str { color: #0d9488; }
+    .code-num { color: #d97706; }
+    .badge-post { background: #0284c7; color: white; font-weight: 700; padding: 2px 7px; border-radius: 4px; font-size: 10.5px; }
+    .btn-run {
+      background: #0f2c4a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      height: 38px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      width: 100%;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LEFT SIDEBAR -->
+  <aside>
+    <div>
+      <div class="brand">
+        <div class="brand-logo"><i class="fa-solid fa-shapes"></i></div>
+        <div class="brand-text">
+          <h2>SmartTix</h2>
+          <span>Event Management</span>
+        </div>
+      </div>
+
+      <ul class="nav-list">
+        <li class="nav-item" onclick="switchTab('dashboard', this)">
+          <i class="fa-solid fa-house"></i>
+          <span>Dashboard</span>
+        </li>
+        <li class="nav-item" onclick="switchTab('events', this)">
+          <i class="fa-regular fa-calendar-days"></i>
+          <span>Events</span>
+        </li>
+        <li class="nav-item active" onclick="switchTab('forecast', this)">
+          <i class="fa-solid fa-arrow-trend-up"></i>
+          <span>Attendance Forecast</span>
+        </li>
+        <li class="nav-item" onclick="switchTab('tickets', this)">
+          <i class="fa-solid fa-ticket"></i>
+          <span>Tickets</span>
+        </li>
+        <li class="nav-item" onclick="switchTab('reports', this)">
+          <i class="fa-solid fa-file-invoice"></i>
+          <span>Reports</span>
+        </li>
+        <li class="nav-item" onclick="switchTab('settings', this)">
+          <i class="fa-solid fa-gear"></i>
+          <span>Settings</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar-footer">
+      <i class="fa-solid fa-shield-halved"></i>
+      <div>
+        <div class="foot-text">Credential Management</div>
+        <div class="foot-sub">Secure &bull; Reliable &bull; Connected</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEW -->
+  <div class="app-main">
+    <header>
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Search events, orders, or analytics...">
+      </div>
+      <div class="header-user">
+        <div class="notif-bell">
+          <i class="fa-regular fa-bell"></i>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="user-profile">
+          <div class="avatar-initials">JD</div>
+          <div class="user-meta">
+            <div class="name">John Doe</div>
+            <div class="role">Event Organiser</div>
+          </div>
+          <i class="fa-solid fa-chevron-down" style="font-size: 11px; color: #889bad; margin-left: 4px;"></i>
+        </div>
+      </div>
+    </header>
+
+    <main class="content-area">
+
+      <!-- ================= PAGE 1: DASHBOARD ================= -->
+      <section id="view-dashboard" class="view-page">
+        <div class="section-head">
+          <h2>Platform Overview</h2>
+          <p>Real-time metrics and event performance highlights.</p>
+        </div>
+
+        <div class="kpi-grid-4">
+          <div class="kpi-stat kpi-teal">
+            <i class="fa-regular fa-calendar-check"></i>
+            <div>
+              <div class="kpi-num">18</div>
+              <div class="kpi-lbl">Active Events</div>
+            </div>
+          </div>
+          <div class="kpi-stat kpi-blue">
+            <i class="fa-solid fa-ticket"></i>
+            <div>
+              <div class="kpi-num">3,670</div>
+              <div class="kpi-lbl">Tickets Sold</div>
+            </div>
+          </div>
+          <div class="kpi-stat kpi-purple">
+            <i class="fa-solid fa-users"></i>
+            <div>
+              <div class="kpi-num">3,083</div>
+              <div class="kpi-lbl">Predicted Turnout</div>
+            </div>
+          </div>
+          <div class="kpi-stat kpi-amber">
+            <i class="fa-solid fa-dollar-sign"></i>
+            <div>
+              <div class="kpi-num">$182.4k</div>
+              <div class="kpi-lbl">Gross Revenue</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ui-card">
+          <h3 style="font-size: 17px; margin-bottom: 16px;">Recent Event Check-in Snapshot</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Event ID</th>
+                <th>Type</th>
+                <th>Tickets Sold</th>
+                <th>Predicted Attendance</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>EVT-12345</strong></td>
+                <td>Conference</td>
+                <td>500</td>
+                <td>420</td>
+                <td><span class="badge badge-success">Optimized</span></td>
+              </tr>
+              <tr>
+                <td><strong>evt_102</strong></td>
+                <td>Concert</td>
+                <td>800</td>
+                <td>740</td>
+                <td><span class="badge badge-success">Capacity OK</span></td>
+              </tr>
+              <tr>
+                <td><strong>Race 5657</strong></td>
+                <td>Concert</td>
+                <td>1,200</td>
+                <td>985</td>
+                <td><span class="badge badge-warn">Needs Review</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= PAGE 2: EVENTS ================= -->
+      <section id="view-events" class="view-page">
+        <div class="section-head">
+          <h2>All Events</h2>
+          <p>Manage and monitor schedules, venues, and ticket sales velocity.</p>
+        </div>
+
+        <div class="ui-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Event Name</th>
+                <th>ID</th>
+                <th>Category</th>
+                <th>Date / Horizon</th>
+                <th>Tickets Sold</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Tech Leaders Summit 2026</td>
+                <td>EVT-12345</td>
+                <td>Conference</td>
+                <td>In 7 days (Weekend)</td>
+                <td>500</td>
+                <td><button class="btn-primary" style="height:32px; padding: 0 12px; font-size:12px;" onclick="goToForecast('EVT-12345')">Forecast</button></td>
+              </tr>
+              <tr>
+                <td>Neon Symphony World Tour</td>
+                <td>evt_102</td>
+                <td>Concert</td>
+                <td>In 14 days (Weekend)</td>
+                <td>800</td>
+                <td><button class="btn-primary" style="height:32px; padding: 0 12px; font-size:12px;" onclick="goToForecast('evt_102')">Forecast</button></td>
+              </tr>
+              <tr>
+                <td>Founders Mixer & Pitch Night</td>
+                <td>evt_103</td>
+                <td>Workshop</td>
+                <td>In 3 days (Weekday)</td>
+                <td>120</td>
+                <td><button class="btn-primary" style="height:32px; padding: 0 12px; font-size:12px;" onclick="goToForecast('evt_103')">Forecast</button></td>
+              </tr>
+              <tr>
+                <td>Grand Prix Championship</td>
+                <td>Race 5657</td>
+                <td>Concert</td>
+                <td>In 10 days (Weekend)</td>
+                <td>1,200</td>
+                <td><button class="btn-primary" style="height:32px; padding: 0 12px; font-size:12px;" onclick="goToForecast('Race 5657')">Forecast</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= PAGE 3: ATTENDANCE FORECAST (ACTIVE) ================= -->
+      <section id="view-forecast" class="view-page active">
+        <!-- HERO BANNER -->
+        <section class="hero-banner">
+          <div>
+            <span class="ai-badge">AI Powered Insights</span>
+            <h1 class="hero-title">Event Attendance Forecast</h1>
+            <p class="hero-desc">Get an accurate prediction of how many people are likely to attend your event using our machine learning model.</p>
+          </div>
+          <div class="callout-pill">
+            Better planning.<br>Greater success.
+          </div>
+        </section>
+
+        <!-- FORECAST SECTION -->
+        <section class="forecast-grid">
+          <!-- FORM -->
+          <div class="ui-card">
+            <div class="card-head">
+              <div class="card-icon teal-bg"><i class="fa-regular fa-calendar-check"></i></div>
+              <div class="card-titles">
+                <h3>Request Attendance Forecast</h3>
+                <p>Enter the event details to get a predicted attendance.</p>
+              </div>
+            </div>
+
+            <form id="forecastForm" onsubmit="event.preventDefault(); triggerForecast();">
+              <div class="form-group">
+                <label class="form-label">Event ID <span class="req">*</span></label>
+                <div class="input-wrapper">
+                  <input type="text" id="eventInput" class="text-input" placeholder="e.g. EVT-12345" value="EVT-12345">
+                  <i class="fa-solid fa-link input-icon-right" onclick="populateExample('EVT-12345')"></i>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Event Details <span class="opt">(Optional)</span></label>
+                <div class="info-callout">
+                  <i class="fa-solid fa-circle-info"></i>
+                  <div>The model uses historical event data, ticket sales and event information to generate a forecast.</div>
+                </div>
+              </div>
+
+              <div class="btn-row">
+                <button type="button" class="btn-secondary" onclick="resetForm()">
+                  <i class="fa-solid fa-arrow-rotate-right"></i> Reset
+                </button>
+                <button type="submit" class="btn-primary" id="btnSubmit">
+                  <span>Get Forecast</span> <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- RESULTS CARD -->
+          <div class="ui-card">
+            <div class="card-head">
+              <div class="card-icon mint-bg"><i class="fa-solid fa-arrow-trend-up"></i></div>
+              <div class="card-titles">
+                <h3>Forecast Results</h3>
+                <p>Here's the predicted attendance for the event.</p>
+              </div>
+            </div>
+
+            <div class="stats-row">
+              <div class="stat-card">
+                <div class="stat-icon-wrap teal-accent"><i class="fa-solid fa-users"></i></div>
+                <div class="stat-info">
+                  <div class="stat-label">Predicted Attendance</div>
+                  <div><span class="stat-num" id="predictedAttendance">420</span><span style="font-size:13px; margin-left:4px; color:#64748b;">people</span></div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon-wrap mint-accent"><i class="fa-solid fa-ticket"></i></div>
+                <div class="stat-info">
+                  <div class="stat-label">Tickets Sold</div>
+                  <div><span class="stat-num" id="ticketsSold">500</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="forecast-meta-row">
+              <div class="meta-item">
+                <i class="fa-solid fa-gear"></i>
+                <div>
+                  <div class="meta-label">Model Version</div>
+                  <div class="meta-val" id="modelVersion">v1.0.0</div>
+                </div>
+              </div>
+              <div class="meta-divider"></div>
+              <div class="meta-item">
+                <i class="fa-regular fa-calendar"></i>
+                <div>
+                  <div class="meta-label">Forecasted At</div>
+                  <div class="meta-val" id="forecastedAt">15 Oct 2026, 11:45 AM</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="disclaimer-callout">
+              <i class="fa-regular fa-lightbulb"></i>
+              <span>This is an illustrative example. Actual predictions may vary based on real event data and model performance.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- CODE EXAMPLE CARD -->
+        <section class="ui-card">
+          <h3 style="font-size: 17px; margin-bottom: 20px;">Example Request & Response</h3>
+          <div class="code-grid">
+            <div>
+              <div class="code-col-head">
+                <span><i class="fa-solid fa-code"></i> Request (JSON)</span>
+                <i class="fa-regular fa-copy" style="cursor:pointer;" onclick="copySnippet('reqCode')"></i>
+              </div>
+              <div class="code-block" id="reqCode">{
+  <span class="code-key">"eventId"</span>: <span class="code-str">"EVT-12345"</span>
+}</div>
+            </div>
+
+            <div>
+              <div class="code-col-head">
+                <span><i class="fa-solid fa-code"></i> Response (JSON)</span>
+                <i class="fa-regular fa-copy" style="cursor:pointer;" onclick="copySnippet('resCode')"></i>
+              </div>
+              <div class="code-block" id="resCode">{
+  <span class="code-key">"predictedAttendance"</span>: <span class="code-num">420</span>,
+  <span class="code-key">"ticketsSold"</span>: <span class="code-num">500</span>,
+  <span class="code-key">"modelVersion"</span>: <span class="code-str">"v1.0.0"</span>,
+  <span class="code-key">"forecastedAt"</span>: <span class="code-str">"2026-10-15T11:45:00Z"</span>
+}</div>
+            </div>
+
+            <div>
+              <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">Try It Out</div>
+              <div style="display:flex; align-items:center; gap:8px; font-family:'JetBrains Mono'; font-size:12px; margin-bottom:14px;">
+                <span class="badge-post">POST</span>
+                <span>/api/events/{id}/forecast</span>
+              </div>
+              <input type="text" id="apiTestId" class="text-input" style="height:38px; margin-bottom:12px;" value="EVT-12345">
+              <button type="button" class="btn-run" onclick="runFromTryItOut()">
+                <i class="fa-solid fa-play" style="font-size: 11px;"></i>
+                <span>Run Request</span>
+              </button>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ================= PAGE 4: TICKETS ================= -->
+      <section id="view-tickets" class="view-page">
+        <div class="section-head">
+          <h2>Ticketing Overview</h2>
+          <p>Real-time ticket tier allocations and scan ratios.</p>
+        </div>
+        <div class="ui-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tier</th>
+                <th>Capacity</th>
+                <th>Sold</th>
+                <th>Price</th>
+                <th>Estimated Attendance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>VIP All-Access</strong></td>
+                <td>100</td>
+                <td>100</td>
+                <td>$299</td>
+                <td>95%</td>
+              </tr>
+              <tr>
+                <td><strong>General Admission</strong></td>
+                <td>500</td>
+                <td>420</td>
+                <td>$99</td>
+                <td>84%</td>
+              </tr>
+              <tr>
+                <td><strong>Early Bird</strong></td>
+                <td>200</td>
+                <td>200</td>
+                <td>$69</td>
+                <td>88%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= PAGE 5: REPORTS ================= -->
+      <section id="view-reports" class="view-page">
+        <div class="section-head">
+          <h2>Audit & Accuracy Reports</h2>
+          <p>Model evaluations comparing predicted vs actual check-ins.</p>
+        </div>
+        <div class="ui-card">
+          <h3 style="font-size: 17px; margin-bottom: 12px;">Model Evaluation Metrics (Holdout Set)</h3>
+          <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 20px;">
+            Audited using historical events to prevent target leakage.
+          </p>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            <div style="background:#f8fafc; padding:20px; border-radius:10px; border:1px solid #e2e8f0;">
+              <div style="font-size:12px; color:#64748b;">Mean Absolute Error (MAE)</div>
+              <div style="font-size:24px; font-weight:800; color:#0f172a; margin-top:4px;">18.5 people</div>
+            </div>
+            <div style="background:#f8fafc; padding:20px; border-radius:10px; border:1px solid #e2e8f0;">
+              <div style="font-size:12px; color:#64748b;">Root Mean Squared Error (RMSE)</div>
+              <div style="font-size:24px; font-weight:800; color:#0f172a; margin-top:4px;">24.2 people</div>
+            </div>
+            <div style="background:#f8fafc; padding:20px; border-radius:10px; border:1px solid #e2e8f0;">
+              <div style="font-size:12px; color:#64748b;">Model Version</div>
+              <div style="font-size:24px; font-weight:800; color:#0f172a; margin-top:4px;">v1.0.0</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PAGE 6: SETTINGS ================= -->
+      <section id="view-settings" class="view-page">
+        <div class="section-head">
+          <h2>Model & API Configuration</h2>
+          <p>Adjust forecast horizons, security rules, and data sources.</p>
+        </div>
+        <div class="ui-card">
+          <div style="display:flex; flex-direction:column; gap:20px; max-width:600px;">
+            <div>
+              <label class="form-label">Default Forecast Horizon (Days Before Event)</label>
+              <input type="number" class="text-input" value="7">
+            </div>
+            <div>
+              <label class="form-label">Active Model Artifact</label>
+              <input type="text" class="text-input" value="attendance_model.joblib" disabled style="background:#f1f5f9;">
+            </div>
+            <div>
+              <label class="form-label">Backend Database Source</label>
+              <input type="text" class="text-input" value="SQLite (events.db)" disabled style="background:#f1f5f9;">
+            </div>
+            <button class="btn-primary" style="width:160px; height:40px;" onclick="alert('Settings saved.')">Save Changes</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Tab Switching Function
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      el.classList.add('active');
+
+      document.querySelectorAll('.view-page').forEach(page => page.classList.remove('active'));
+      const activePage = document.getElementById('view-' + tabId);
+      if (activePage) {
+        activePage.classList.add('active');
+      }
+    }
+
+    function goToForecast(eventId) {
+      const forecastNav = document.querySelectorAll('.nav-item')[2];
+      switchTab('forecast', forecastNav);
+      document.getElementById('eventInput').value = eventId;
+      document.getElementById('apiTestId').value = eventId;
+      triggerForecast(eventId);
+    }
+
+    async function triggerForecast(idOverride) {
+      const eventId = idOverride || document.getElementById('eventInput').value.trim();
+      if (!eventId) {
+        alert("Please enter a valid Event ID.");
+        return;
+      }
+
+      document.getElementById('eventInput').value = eventId;
+      document.getElementById('apiTestId').value = eventId;
+      document.getElementById('reqCode').innerHTML = `{\n  <span class="code-key">"eventId"</span>: <span class="code-str">"${eventId}"</span>\n}`;
+
+      const btn = document.getElementById('btnSubmit');
+      btn.innerHTML = `<span>Loading...</span>`;
+      btn.disabled = true;
+
+      try {
+        const response = await fetch(`/api/events/${encodeURIComponent(eventId)}/attendance-forecast`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ forecastHorizonDays: 7 })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.detail || `Server returned error ${response.status}`);
+        }
+
+        const data = await response.json();
+        document.getElementById('predictedAttendance').innerText = data.predictedAttendance;
+        document.getElementById('ticketsSold').innerText = data.ticketsSold;
+        document.getElementById('modelVersion').innerText = data.modelVersion || "v1.0.0";
+        
+        const dateObj = new Date(data.forecastedAt);
+        const formattedDate = dateObj.toLocaleDateString('en-GB', {
+          day: '2-digit', month: 'short', year: 'numeric'
+        }) + ', ' + dateObj.toLocaleTimeString('en-US', {
+          hour: '2-digit', minute: '2-digit', hour12: true
+        });
+        document.getElementById('forecastedAt').innerText = formattedDate;
+
+        document.getElementById('resCode').innerHTML = `{\n  <span class="code-key">"predictedAttendance"</span>: <span class="code-num">${data.predictedAttendance}</span>,\n  <span class="code-key">"ticketsSold"</span>: <span class="code-num">${data.ticketsSold}</span>,\n  <span class="code-key">"modelVersion"</span>: <span class="code-str">"${data.modelVersion}"</span>,\n  <span class="code-key">"forecastedAt"</span>: <span class="code-str">"${data.forecastedAt}"</span>\n}`;
+
+      } catch (err) {
+        alert(`Failed to fetch forecast: ${err.message}`);
+      } finally {
+        btn.innerHTML = `<span>Get Forecast</span> <i class="fa-solid fa-arrow-right"></i>`;
+        btn.disabled = false;
+      }
+    }
+
+    function runFromTryItOut() {
+      const id = document.getElementById('apiTestId').value.trim();
+      triggerForecast(id);
+    }
+
+    function populateExample(id) {
+      document.getElementById('eventInput').value = id;
+      document.getElementById('apiTestId').value = id;
+      triggerForecast(id);
+    }
+
+    function resetForm() {
+      document.getElementById('eventInput').value = '';
+      document.getElementById('apiTestId').value = '';
+      document.getElementById('predictedAttendance').innerText = '0';
+      document.getElementById('ticketsSold').innerText = '0';
+    }
+
+    function copySnippet(elementId) {
+      navigator.clipboard.writeText(document.getElementById(elementId).innerText);
+      alert("JSON copied to clipboard!");
+    }
+  </script>
+</body>
+</html>

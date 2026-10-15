@@ -1,0 +1,11 @@
+﻿event_type,tickets_sold,days_to_event,is_weekend,actual_attendance
+Conference,500,7,1,420
+Concert,800,14,1,740
+Workshop,100,3,0,91
+Networking,250,10,0,190
+Conference,600,30,0,492
+Workshop,150,7,1,130
+Concert,400,5,1,365
+Networking,300,2,0,255
+Conference,350,14,0,295
+Workshop,200,21,1,165
