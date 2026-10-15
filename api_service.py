@@ -1,6 +1,6 @@
 ﻿from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 import pandas as pd
 import joblib
@@ -10,7 +10,8 @@ from datetime import datetime, timezone
 
 app = FastAPI(title="SmartTix Attendance ML Service", version="1.0.0")
 
-# Mount static folder
+# Ensure static directory exists
+os.makedirs("static", exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Load model pipeline
@@ -19,7 +20,6 @@ model = None
 if os.path.exists(MODEL_PATH):
     model = joblib.load(MODEL_PATH)
 
-# In-memory defaults fallback for UI IDs
 FALLBACK_STORE = {
     "evt_101": {"event_type": "Conference", "tickets_sold": 500, "is_weekend": 1},
     "evt_102": {"event_type": "Concert", "tickets_sold": 800, "is_weekend": 1},
@@ -38,7 +38,6 @@ class ForecastResponse(BaseModel):
     forecastedAt: str
 
 def fetch_event(event_id: str):
-    # Try querying SQLite if exists
     if os.path.exists("events.db"):
         try:
             conn = sqlite3.connect("events.db")
@@ -50,12 +49,15 @@ def fetch_event(event_id: str):
                 return {"event_type": row[0], "tickets_sold": int(row[1]), "is_weekend": int(row[2])}
         except Exception:
             pass
-    # Fallback dictionary
     return FALLBACK_STORE.get(event_id)
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def serve_index():
-    return FileResponse("static/index.html")
+    index_path = os.path.join("static", "index.html")
+    if os.path.exists(index_path):
+        with open(index_path, "r", encoding="utf-8") as f:
+            return f.read()
+    return "<h1>SmartTix Attendance Service is Running. (index.html not found)</h1>"
 
 @app.post("/api/events/{eventId}/attendance-forecast", response_model=ForecastResponse)
 def get_attendance_forecast(eventId: str, request: ForecastRequest):
@@ -66,7 +68,6 @@ def get_attendance_forecast(eventId: str, request: ForecastRequest):
     if model is None:
         raise HTTPException(status_code=500, detail="Model artifact attendance_model.joblib not found.")
 
-    # Form feature frame matching model requirements
     df = pd.DataFrame([{
         "event_type": event["event_type"],
         "tickets_sold": event["tickets_sold"],

@@ -1,13 +1,12 @@
-FROM python:3.14-slim
+﻿FROM python:3.14-slim
 
 WORKDIR /app
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY attendance_model.joblib .
-COPY api_service.py .
-COPY events.db .
+# Copy all project files and folders (including static/)
+COPY . .
 
 EXPOSE 8000
 
